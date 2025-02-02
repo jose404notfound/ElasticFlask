@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Pueblos de Málaga</title>
+    <style>
+        /* General page styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Fondo negro */
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #FFD700; /* Amarillo eléctrico */
+        }
+
+        form {
+            text-align: center;
+            margin: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border: 2px solid #FFD700; /* Amarillo eléctrico */
+            border-radius: 5px;
+            background-color: #333; /* Fondo oscuro */
+            color: white;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #FFD700; /* Amarillo eléctrico */
+            color: #121212; /* Fondo negro */
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ffcc00; /* Amarillo más claro al pasar el ratón */
+        }
+
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #1e1e1e; /* Fondo gris oscuro */
+            border-radius: 8px;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .result-item {
+            background-color: #2a2a2a; /* Fondo oscuro para cada resultado */
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item h3 {
+            color: #FFD700; /* Amarillo eléctrico */
+            margin: 0;
+        }
+
+        .result-item p {
+            color: #b0b0b0; /* Gris claro para el texto */
+        }
+
+        .result-item strong {
+            color: #FFD700; /* Amarillo eléctrico para los labels */
+        }
+
+        .no-results {
+            color: #ff3333; /* Rojo brillante para cuando no haya resultados */
+            text-align: center;
+            font-size: 18px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Búsqueda de Pueblos de Málaga</h1>
+
+    <!-- Formulario de búsqueda -->
+    <form action="/search" method="get">
+        <input type="text" name="q" placeholder="Buscar Pueblo..." required />
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Resultados de la búsqueda -->
+    <div id="results"></div>
+
+    <script>
+        // Obtén los parámetros de la URL (query string)
+        const queryParams = new URLSearchParams(window.location.search);
+        const searchQuery = queryParams.get('q');
+
+        // Si hay una consulta de búsqueda
+        if (searchQuery) {
+            fetch(`/search?q=${searchQuery}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = ''; // Limpiar resultados previos
+
+                    // Si se encontraron resultados
+                    if (data.length > 0) {
+                        data.forEach(pueblo => {
+                            resultsDiv.innerHTML += `
+                                <div class="result-item">
+                                    <h3>${pueblo.NombreLocalidad}</h3>
+                                    <p><strong>Comarca:</strong> ${pueblo.Comarca}</p>
+                                    <p><strong>Simbolo Químico:</strong> ${pueblo.SimboloQuimico}</p>
+                                    <p><strong>Altura Nivel Mar:</strong> ${pueblo.AlturaNivelMar} m</p>
+                                    <p><strong>Habitantes:</strong> ${pueblo.Habitantes}</p>
+                                    <p><strong>Superficie:</strong> ${pueblo.Superficie} km²</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '<p class="no-results">No se encontraron resultados.</p>';
+                    }
+                });
+        }
+    </script>
+
+</body>
+</html>
